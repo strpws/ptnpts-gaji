@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perbandingan Gaji Lulusan S1 PTN dan PTS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --blue:        #00559A;
+  --blue-pale:   #EBF2FA;
+  --blue-deep:   #004A88;
+  --blue-hover:  #0062B1;
+  --gold:        #DBAA00;
+  --gold-pale:   #FEF6D8;
+  --gold-deep:   #9A7800;
+  --gold-hover:  #E8B500;
+  --black:       #222222;
+  --grey-dk:     #333333;
+  --grey-md:     #666666;
+  --grey-lt:     #999999;
+  --border:      #DDDDDD;
+  --divider:     #EFEFEF;
+  --surface:     #F4F4F4;
+  --row-hover:   #F5F8FC;
+  --white:       #FFFFFF;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+body {
+  font-family: 'PT Sans', ui-sans-serif, system-ui, sans-serif;
+  background: var(--white);
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Card shell — fluid, no fixed width ── */
+.card {
+  background: var(--white);
+  padding: 16px 0 14px;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Title ── */
+.chart-title {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--black);
+  line-height: 1.33;
+  margin-bottom: 6px;
+}
+
+/* ── Deck ── */
+.chart-deck {
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  font-size: 12px;
+  color: var(--grey-md);
+  line-height: 1.52;
+  margin-bottom: 13px;
+}
+
+/* ── Legend ── */
+.legend {
+  display: flex;
+  gap: 14px;
+  padding: 7px 0;
+  border-top: 1px solid var(--surface);
+  border-bottom: 1px solid var(--surface);
+  margin-bottom: 4px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'PT Sans', sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--grey-dk);
+}
+
+.legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ── Chart ── */
+.chart {
+  margin-bottom: 13px;
+}
+
+.chart-row {
+  position: relative;
+  padding: 9px 5px;
+  border-radius: 4px;
+  cursor: default;
+  transition: background 0.13s ease;
+}
+
+.chart-row + .chart-row {
+  border-top: 1px solid var(--divider);
+}
+
+.chart-row:hover {
+  background: var(--row-hover);
+}
+
+/* ── Row label ── */
+.row-label {
+  font-family: 'PT Sans', sans-serif;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--grey-dk);
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+
+.has-pill .row-label {
+  padding-right: 80px;
+}
+
+/* ── Bar components ── */
+.bar-line {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.bar-track {
+  flex: 1;
+  height: 13px;
+  background: var(--surface);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.bar-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 2px;
+  width: 0%;
+  transition: background 0.13s ease;
+}
+
+.bar-fill--ptn { background: var(--blue); }
+.bar-fill--pts { background: var(--gold); }
+
+.chart-row:hover .bar-fill--ptn { background: var(--blue-hover); }
+.chart-row:hover .bar-fill--pts { background: var(--gold-hover); }
+
+/* ── Bar value ── */
+.bar-val {
+  width: 44px;
+  font-family: 'PT Sans', sans-serif;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-align: right;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.bar-val--ptn { color: var(--blue); }
+.bar-val--pts { color: var(--gold-deep); }
+
+/* ── Diff pill (hover only) ── */
+.diff-pill {
+  position: absolute;
+  top: 9px;
+  right: 5px;
+  font-family: 'PT Sans', sans-serif;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.025em;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  white-space: nowrap;
+  opacity: 0;
+  transform: scale(0.88);
+  transition: opacity 0.14s ease, transform 0.14s ease;
+  pointer-events: none;
+}
+
+.chart-row:hover .diff-pill {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.diff-pill--pts { background: var(--gold-pale); color: var(--gold-deep); }
+
+/* ── Source note ── */
+.source-note {
+  font-family: 'PT Sans', sans-serif;
+  font-size: 9px;
+  color: var(--grey-lt);
+  line-height: 1.45;
+  border-top: 1px solid var(--border);
+  padding-top: 9px;
+}
+
+.source-note strong {
+  color: var(--grey-md);
+  font-weight: 700;
+}
+
+.credit {
+  font-family: 'PT Sans', sans-serif;
+  font-size: 9px;
+  color: var(--grey-lt);
+  margin-top: 4px;
+}
+</style>
+</head>
+<body>
+
+<div class="card" id="card" role="region" aria-label="Perbandingan gaji rata-rata lulusan S1 PTN dan PTS">
+
+  <h1 class="chart-title">Perbandingan Gaji Lulusan S1 PTN dan PTS</h1>
+  <p class="chart-deck">Rata-rata gaji lulusan S1 yang bekerja sebagai karyawan formal dan <em>freelancer</em>, usia 20–25 tahun (juta rupiah/bulan)</p>
+
+  <div class="legend" aria-hidden="true">
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:var(--blue)"></div>
+      PTN
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:var(--gold)"></div>
+      PTS
+    </div>
+  </div>
+
+  <div class="chart" role="list">
+
+    <!-- PTN: 2.07 → 75.27% of scale 2.75 — baseline, no diff pill -->
+    <div class="chart-row" role="listitem"
+         aria-label="PTN: rata-rata Rp 2,07 juta per bulan">
+      <div class="row-label">PTN</div>
+      <div class="bar-line">
+        <div class="bar-track">
+          <div class="bar-fill bar-fill--ptn" data-target="75.27"></div>
+        </div>
+        <span class="bar-val bar-val--ptn">2,07 jt</span>
+      </div>
+    </div>
+
+    <!-- PTS: 2.55 → 92.73% of scale 2.75 -->
+    <div class="chart-row has-pill" role="listitem"
+         aria-label="PTS: rata-rata Rp 2,55 juta per bulan">
+      <div class="diff-pill diff-pill--pts" aria-hidden="true">+Rp 0,48 jt vs PTN</div>
+      <div class="row-label">PTS</div>
+      <div class="bar-line">
+        <div class="bar-track">
+          <div class="bar-fill bar-fill--pts" data-target="92.73"></div>
+        </div>
+        <span class="bar-val bar-val--pts">2,55 jt</span>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="source-note">
+    <strong>Sumber:</strong> Sakernas BPS 2025 &middot; Karyawan formal &amp; <em>freelancer</em>, lulusan S1, usia 20–25 tahun
+  </p>
+  <p class="credit">Diolah: Kompas/EKI/FAI/SPW</p>
+
+</div>
+
+<script>
+(function () {
+  var card = document.getElementById('card');
+  var fills = document.querySelectorAll('.bar-fill');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function animate() {
+    card.classList.add('visible');
+    fills.forEach(function (fill, i) {
+      var target = fill.dataset.target;
+      var delay = reduced ? 0 : (100 + i * 95);
+      setTimeout(function () {
+        if (!reduced) {
+          fill.style.transition =
+            'width 0.82s cubic-bezier(0.16, 1, 0.3, 1), background 0.13s ease';
+        }
+        fill.style.width = target + '%';
+      }, delay);
+    });
+  }
+
+  if ('IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function (entries) {
+      if (entries[0].isIntersecting) {
+        animate();
+        obs.disconnect();
+      }
+    }, { threshold: 0.2 });
+    obs.observe(card);
+  } else {
+    setTimeout(animate, 250);
+  }
+}());
+</script>
+
+</body>
+</html>
