@@ -40,11 +40,15 @@ html { font-size: clamp(13px, 2.1vw, 17px); }
   }
 }
 
+/* ── Fill the iframe's vertical window (no blank gap on tall iframes) ── */
 body {
   font-family: 'PT Sans', ui-sans-serif, system-ui, sans-serif;
   background: var(--white);
-  margin: 0;
-  padding: 0;
+  height: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* ── Card shell ── */
@@ -52,8 +56,12 @@ body {
   background: var(--white);
   padding: 1em 1em 0.9em;
   width: 100%;
+  max-width: 680px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   opacity: 0;
-  transform: translateY(6px);
+  transform: translateY(0.46em);
   transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
@@ -103,21 +111,22 @@ body {
 }
 
 .legend-swatch {
-  width: 0.65em;
-  height: 0.65em;
-  border-radius: 2px;
+  width: 0.95em;
+  height: 0.95em;
+  border-radius: 0.19em;
   flex-shrink: 0;
 }
 
-/* ── Chart ── */
+/* ── Chart — flex:1 so the card stretches to fill the iframe ── */
 .chart {
-  margin-bottom: 0.9em;
+  flex: 1;
+  margin-bottom: 1em;
 }
 
 .chart-row {
   position: relative;
-  padding: 0.65em 0.35em;
-  border-radius: 4px;
+  padding: 0.69em 0.38em;
+  border-radius: 0.31em;
   cursor: default;
   transition: background 0.13s ease;
 }
@@ -126,7 +135,8 @@ body {
   border-top: 1px solid var(--divider);
 }
 
-.chart-row:hover {
+.chart-row:hover,
+.chart-row.active {
   background: var(--row-hover);
 }
 
@@ -136,26 +146,26 @@ body {
   font-size: 0.88rem;
   font-weight: 700;
   color: var(--grey-dk);
-  margin-bottom: 0.45em;
+  margin-bottom: 0.52em;
   line-height: 1.2;
 }
 
 .has-pill .row-label {
-  padding-right: 5.5em;
+  padding-right: 6.96em;
 }
 
 /* ── Bar components ── */
 .bar-line {
   display: flex;
   align-items: center;
-  gap: 0.4em;
+  gap: 0.38em;
 }
 
 .bar-track {
   flex: 1;
-  height: 0.9em;
+  height: 1em;
   background: var(--surface);
-  border-radius: 2px;
+  border-radius: 0.15em;
   overflow: hidden;
   position: relative;
 }
@@ -163,7 +173,7 @@ body {
 .bar-fill {
   position: absolute;
   inset: 0 auto 0 0;
-  border-radius: 2px;
+  border-radius: 0.15em;
   width: 0%;
   transition: background 0.13s ease;
 }
@@ -171,14 +181,16 @@ body {
 .bar-fill--ptn { background: var(--blue); }
 .bar-fill--pts { background: var(--gold); }
 
-.chart-row:hover .bar-fill--ptn { background: var(--blue-hover); }
-.chart-row:hover .bar-fill--pts { background: var(--gold-hover); }
+.chart-row:hover .bar-fill--ptn,
+.chart-row.active .bar-fill--ptn { background: var(--blue-hover); }
+.chart-row:hover .bar-fill--pts,
+.chart-row.active .bar-fill--pts { background: var(--gold-hover); }
 
 /* ── Bar value ── */
 .bar-val {
-  width: 3.2em;
+  width: 4.19em;
   font-family: 'PT Sans', sans-serif;
-  font-size: 0.8rem;
+  font-size: 0.81rem;
   font-weight: 700;
   text-align: right;
   flex-shrink: 0;
@@ -188,7 +200,7 @@ body {
 .bar-val--ptn { color: var(--blue); }
 .bar-val--pts { color: var(--gold-deep); }
 
-/* ── Diff pill (hover only) ── */
+/* ── Diff pill (revealed on hover / tap) ── */
 .diff-pill {
   position: absolute;
   top: 0.65em;
@@ -197,7 +209,7 @@ body {
   font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.025em;
-  padding: 0.25em 0.7em;
+  padding: 0.35em 1.06em;
   border-radius: 9999px;
   white-space: nowrap;
   opacity: 0;
@@ -206,7 +218,8 @@ body {
   pointer-events: none;
 }
 
-.chart-row:hover .diff-pill {
+.chart-row:hover .diff-pill,
+.chart-row.active .diff-pill {
   opacity: 1;
   transform: scale(1);
 }
@@ -216,11 +229,11 @@ body {
 /* ── Source note ── */
 .source-note {
   font-family: 'PT Sans', sans-serif;
-  font-size: 0.7rem;
+  font-size: 0.69rem;
   color: var(--grey-lt);
   line-height: 1.45;
   border-top: 1px solid var(--border);
-  padding-top: 0.65em;
+  padding-top: 1em;
 }
 
 .source-note strong {
@@ -230,9 +243,9 @@ body {
 
 .credit {
   font-family: 'PT Sans', sans-serif;
-  font-size: 0.7rem;
+  font-size: 0.69rem;
   color: var(--grey-lt);
-  margin-top: 0.3em;
+  margin-top: 0.44em;
 }
 </style>
 </head>
@@ -322,6 +335,21 @@ body {
   } else {
     setTimeout(animate, 250);
   }
+
+  /* ── Tap to reveal diff pill on touch (no :hover/mouseleave there) ── */
+  var rows = document.querySelectorAll('.chart-row');
+  rows.forEach(function (row) {
+    row.addEventListener('click', function () {
+      var wasActive = row.classList.contains('active');
+      rows.forEach(function (r) { r.classList.remove('active'); });
+      if (!wasActive) { row.classList.add('active'); }
+    });
+  });
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('.chart-row')) {
+      rows.forEach(function (r) { r.classList.remove('active'); });
+    }
+  });
 }());
 </script>
 
