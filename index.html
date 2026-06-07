@@ -9,6 +9,13 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ── Base font: everything cascades from this clamp ──
+   Inside the iframe vw = iframe width, so fonts scale fluidly. */
+html {
+  font-size: clamp(13px, 2.1vw, 17px);
+  height: 100%;
+}
+
 :root {
   --blue:        #00559A;
   --blue-pale:   #EBF2FA;
@@ -36,20 +43,28 @@
   }
 }
 
+/* ── Fill the iframe's vertical window (no blank gap on tall iframes) ── */
 body {
   font-family: 'PT Sans', ui-sans-serif, system-ui, sans-serif;
   background: var(--white);
-  margin: 0;
-  padding: 0;
+  height: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* ── Card shell — fluid, no fixed width ── */
+/* ── Card shell — fluid, no fixed width, stretches to fill height ── */
 .card {
   background: var(--white);
-  padding: 16px 0 14px;
+  padding: 1.23em 0 1.08em;
   width: 100%;
+  max-width: 680px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   opacity: 0;
-  transform: translateY(6px);
+  transform: translateY(0.46em);
   transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
@@ -61,59 +76,60 @@ body {
 /* ── Title ── */
 .chart-title {
   font-family: 'Lora', Georgia, serif;
-  font-size: 15.5px;
+  font-size: 1.19rem;
   font-weight: 700;
   color: var(--black);
   line-height: 1.33;
-  margin-bottom: 6px;
+  margin-bottom: 0.39em;
 }
 
 /* ── Deck ── */
 .chart-deck {
   font-family: 'Lora', Georgia, serif;
   font-style: italic;
-  font-size: 12px;
+  font-size: 0.92rem;
   color: var(--grey-md);
   line-height: 1.52;
-  margin-bottom: 13px;
+  margin-bottom: 1.08em;
 }
 
 /* ── Legend ── */
 .legend {
   display: flex;
-  gap: 14px;
-  padding: 7px 0;
+  gap: 1.08em;
+  padding: 0.54em 0;
   border-top: 1px solid var(--surface);
   border-bottom: 1px solid var(--surface);
-  margin-bottom: 4px;
+  margin-bottom: 0.31em;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 0.48em;
   font-family: 'PT Sans', sans-serif;
-  font-size: 10.5px;
+  font-size: 0.81rem;
   font-weight: 700;
   color: var(--grey-dk);
 }
 
 .legend-swatch {
-  width: 10px;
-  height: 10px;
-  border-radius: 2px;
+  width: 0.95em;
+  height: 0.95em;
+  border-radius: 0.19em;
   flex-shrink: 0;
 }
 
-/* ── Chart ── */
+/* ── Chart — flex:1 so the card stretches to fill the iframe ── */
 .chart {
-  margin-bottom: 13px;
+  flex: 1;
+  margin-bottom: 1em;
 }
 
 .chart-row {
   position: relative;
-  padding: 9px 5px;
-  border-radius: 4px;
+  padding: 0.69em 0.38em;
+  border-radius: 0.31em;
   cursor: default;
   transition: background 0.13s ease;
 }
@@ -122,36 +138,37 @@ body {
   border-top: 1px solid var(--divider);
 }
 
-.chart-row:hover {
+.chart-row:hover,
+.chart-row.active {
   background: var(--row-hover);
 }
 
 /* ── Row label ── */
 .row-label {
   font-family: 'PT Sans', sans-serif;
-  font-size: 11.5px;
+  font-size: 0.88rem;
   font-weight: 700;
   color: var(--grey-dk);
-  margin-bottom: 6px;
+  margin-bottom: 0.52em;
   line-height: 1.2;
 }
 
 .has-pill .row-label {
-  padding-right: 80px;
+  padding-right: 6.96em;
 }
 
 /* ── Bar components ── */
 .bar-line {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 0.38em;
 }
 
 .bar-track {
   flex: 1;
-  height: 13px;
+  height: 1em;
   background: var(--surface);
-  border-radius: 2px;
+  border-radius: 0.15em;
   overflow: hidden;
   position: relative;
 }
@@ -159,7 +176,7 @@ body {
 .bar-fill {
   position: absolute;
   inset: 0 auto 0 0;
-  border-radius: 2px;
+  border-radius: 0.15em;
   width: 0%;
   transition: background 0.13s ease;
 }
@@ -167,14 +184,16 @@ body {
 .bar-fill--ptn { background: var(--blue); }
 .bar-fill--pts { background: var(--gold); }
 
-.chart-row:hover .bar-fill--ptn { background: var(--blue-hover); }
-.chart-row:hover .bar-fill--pts { background: var(--gold-hover); }
+.chart-row:hover .bar-fill--ptn,
+.chart-row.active .bar-fill--ptn { background: var(--blue-hover); }
+.chart-row:hover .bar-fill--pts,
+.chart-row.active .bar-fill--pts { background: var(--gold-hover); }
 
 /* ── Bar value ── */
 .bar-val {
-  width: 44px;
+  width: 4.19em;
   font-family: 'PT Sans', sans-serif;
-  font-size: 10.5px;
+  font-size: 0.81rem;
   font-weight: 700;
   text-align: right;
   flex-shrink: 0;
@@ -184,16 +203,16 @@ body {
 .bar-val--ptn { color: var(--blue); }
 .bar-val--pts { color: var(--gold-deep); }
 
-/* ── Diff pill (hover only) ── */
+/* ── Diff pill (revealed on hover / tap) ── */
 .diff-pill {
   position: absolute;
-  top: 9px;
-  right: 5px;
+  top: 1.06em;
+  right: 0.59em;
   font-family: 'PT Sans', sans-serif;
-  font-size: 8.5px;
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.025em;
-  padding: 3px 9px;
+  padding: 0.35em 1.06em;
   border-radius: 9999px;
   white-space: nowrap;
   opacity: 0;
@@ -202,7 +221,8 @@ body {
   pointer-events: none;
 }
 
-.chart-row:hover .diff-pill {
+.chart-row:hover .diff-pill,
+.chart-row.active .diff-pill {
   opacity: 1;
   transform: scale(1);
 }
@@ -212,11 +232,11 @@ body {
 /* ── Source note ── */
 .source-note {
   font-family: 'PT Sans', sans-serif;
-  font-size: 9px;
+  font-size: 0.69rem;
   color: var(--grey-lt);
   line-height: 1.45;
   border-top: 1px solid var(--border);
-  padding-top: 9px;
+  padding-top: 1em;
 }
 
 .source-note strong {
@@ -226,9 +246,9 @@ body {
 
 .credit {
   font-family: 'PT Sans', sans-serif;
-  font-size: 9px;
+  font-size: 0.69rem;
   color: var(--grey-lt);
-  margin-top: 4px;
+  margin-top: 0.44em;
 }
 </style>
 </head>
@@ -318,6 +338,21 @@ body {
   } else {
     setTimeout(animate, 250);
   }
+
+  /* ── Tap to reveal diff pill on touch (no :hover/mouseleave there) ── */
+  var rows = document.querySelectorAll('.chart-row');
+  rows.forEach(function (row) {
+    row.addEventListener('click', function () {
+      var wasActive = row.classList.contains('active');
+      rows.forEach(function (r) { r.classList.remove('active'); });
+      if (!wasActive) { row.classList.add('active'); }
+    });
+  });
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('.chart-row')) {
+      rows.forEach(function (r) { r.classList.remove('active'); });
+    }
+  });
 }());
 </script>
 
