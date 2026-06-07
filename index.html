@@ -9,12 +9,9 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ── Base font: everything cascades from this clamp ──
-   Inside the iframe vw = iframe width, so fonts scale fluidly. */
-html {
-  font-size: clamp(13px, 2.1vw, 17px);
-  height: 100%;
-}
+/* Fluid base: ~13px at 640px iframe width, ~17px at 1048px.
+   In an iframe, vw = iframe width, so this scales automatically. */
+html { font-size: clamp(13px, 2.1vw, 17px); }
 
 :root {
   --blue:        #00559A;
@@ -54,10 +51,10 @@ body {
   align-items: center;
 }
 
-/* ── Card shell — fluid, no fixed width, stretches to fill height ── */
+/* ── Card shell ── */
 .card {
   background: var(--white);
-  padding: 1.23em 0 1.08em;
+  padding: 1em 1em 0.9em;
   width: 100%;
   max-width: 680px;
   flex: 1;
@@ -76,39 +73,39 @@ body {
 /* ── Title ── */
 .chart-title {
   font-family: 'Lora', Georgia, serif;
-  font-size: 1.19rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: var(--black);
   line-height: 1.33;
-  margin-bottom: 0.39em;
+  margin-bottom: 0.4em;
 }
 
 /* ── Deck ── */
 .chart-deck {
   font-family: 'Lora', Georgia, serif;
   font-style: italic;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   color: var(--grey-md);
   line-height: 1.52;
-  margin-bottom: 1.08em;
+  margin-bottom: 0.9em;
 }
 
 /* ── Legend ── */
 .legend {
   display: flex;
-  gap: 1.08em;
-  padding: 0.54em 0;
+  gap: 1em;
+  padding: 0.5em 0;
   border-top: 1px solid var(--surface);
   border-bottom: 1px solid var(--surface);
-  margin-bottom: 0.31em;
+  margin-bottom: 0.3em;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 0.48em;
+  gap: 0.4em;
   font-family: 'PT Sans', sans-serif;
-  font-size: 0.81rem;
+  font-size: 0.8rem;
   font-weight: 700;
   color: var(--grey-dk);
 }
@@ -206,8 +203,8 @@ body {
 /* ── Diff pill (revealed on hover / tap) ── */
 .diff-pill {
   position: absolute;
-  top: 1.06em;
-  right: 0.59em;
+  top: 0.65em;
+  right: 0.35em;
   font-family: 'PT Sans', sans-serif;
   font-size: 0.65rem;
   font-weight: 700;
