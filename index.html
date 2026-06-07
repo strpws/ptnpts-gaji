@@ -9,6 +9,10 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* Fluid base: ~13px at 640px iframe width, ~17px at 1048px.
+   In an iframe, vw = iframe width, so this scales automatically. */
+html { font-size: clamp(13px, 2.1vw, 17px); }
+
 :root {
   --blue:        #00559A;
   --blue-pale:   #EBF2FA;
@@ -43,10 +47,10 @@ body {
   padding: 0;
 }
 
-/* ── Card shell — fluid, no fixed width ── */
+/* ── Card shell ── */
 .card {
   background: var(--white);
-  padding: 16px 0 14px;
+  padding: 1em 1em 0.9em;
   width: 100%;
   opacity: 0;
   transform: translateY(6px);
@@ -61,58 +65,58 @@ body {
 /* ── Title ── */
 .chart-title {
   font-family: 'Lora', Georgia, serif;
-  font-size: 15.5px;
+  font-size: 1.2rem;
   font-weight: 700;
   color: var(--black);
   line-height: 1.33;
-  margin-bottom: 6px;
+  margin-bottom: 0.4em;
 }
 
 /* ── Deck ── */
 .chart-deck {
   font-family: 'Lora', Georgia, serif;
   font-style: italic;
-  font-size: 12px;
+  font-size: 0.9rem;
   color: var(--grey-md);
   line-height: 1.52;
-  margin-bottom: 13px;
+  margin-bottom: 0.9em;
 }
 
 /* ── Legend ── */
 .legend {
   display: flex;
-  gap: 14px;
-  padding: 7px 0;
+  gap: 1em;
+  padding: 0.5em 0;
   border-top: 1px solid var(--surface);
   border-bottom: 1px solid var(--surface);
-  margin-bottom: 4px;
+  margin-bottom: 0.3em;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 0.4em;
   font-family: 'PT Sans', sans-serif;
-  font-size: 10.5px;
+  font-size: 0.8rem;
   font-weight: 700;
   color: var(--grey-dk);
 }
 
 .legend-swatch {
-  width: 10px;
-  height: 10px;
+  width: 0.65em;
+  height: 0.65em;
   border-radius: 2px;
   flex-shrink: 0;
 }
 
 /* ── Chart ── */
 .chart {
-  margin-bottom: 13px;
+  margin-bottom: 0.9em;
 }
 
 .chart-row {
   position: relative;
-  padding: 9px 5px;
+  padding: 0.65em 0.35em;
   border-radius: 4px;
   cursor: default;
   transition: background 0.13s ease;
@@ -129,27 +133,27 @@ body {
 /* ── Row label ── */
 .row-label {
   font-family: 'PT Sans', sans-serif;
-  font-size: 11.5px;
+  font-size: 0.88rem;
   font-weight: 700;
   color: var(--grey-dk);
-  margin-bottom: 6px;
+  margin-bottom: 0.45em;
   line-height: 1.2;
 }
 
 .has-pill .row-label {
-  padding-right: 80px;
+  padding-right: 5.5em;
 }
 
 /* ── Bar components ── */
 .bar-line {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 0.4em;
 }
 
 .bar-track {
   flex: 1;
-  height: 13px;
+  height: 0.9em;
   background: var(--surface);
   border-radius: 2px;
   overflow: hidden;
@@ -172,9 +176,9 @@ body {
 
 /* ── Bar value ── */
 .bar-val {
-  width: 44px;
+  width: 3.2em;
   font-family: 'PT Sans', sans-serif;
-  font-size: 10.5px;
+  font-size: 0.8rem;
   font-weight: 700;
   text-align: right;
   flex-shrink: 0;
@@ -187,13 +191,13 @@ body {
 /* ── Diff pill (hover only) ── */
 .diff-pill {
   position: absolute;
-  top: 9px;
-  right: 5px;
+  top: 0.65em;
+  right: 0.35em;
   font-family: 'PT Sans', sans-serif;
-  font-size: 8.5px;
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.025em;
-  padding: 3px 9px;
+  padding: 0.25em 0.7em;
   border-radius: 9999px;
   white-space: nowrap;
   opacity: 0;
@@ -212,11 +216,11 @@ body {
 /* ── Source note ── */
 .source-note {
   font-family: 'PT Sans', sans-serif;
-  font-size: 9px;
+  font-size: 0.7rem;
   color: var(--grey-lt);
   line-height: 1.45;
   border-top: 1px solid var(--border);
-  padding-top: 9px;
+  padding-top: 0.65em;
 }
 
 .source-note strong {
@@ -226,9 +230,9 @@ body {
 
 .credit {
   font-family: 'PT Sans', sans-serif;
-  font-size: 9px;
+  font-size: 0.7rem;
   color: var(--grey-lt);
-  margin-top: 4px;
+  margin-top: 0.3em;
 }
 </style>
 </head>
